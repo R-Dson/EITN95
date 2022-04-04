@@ -41,7 +41,7 @@ class State extends GlobalSimulation{
 		bufferA++;
 		accumulatedA++;
 
-		if (bufferA == 0 || bufferB == 0){
+		if (bufferB == 0){
 			// ready for next signal
 			insertEvent(READY, time + xa);
 		}
@@ -59,7 +59,7 @@ class State extends GlobalSimulation{
 	}
 	
 	private void ready(){
-		if (bufferB == 0)
+		if (bufferB == 0 && bufferA > 0)
 		{
 			bufferA--;
 			// sending back the disconnect signal
@@ -68,7 +68,8 @@ class State extends GlobalSimulation{
 		}
 		else // else add to buffer
 		{
-			bufferB--;
+			if (bufferB > 0)
+				bufferB--;
 		}
 		if (bufferA > 0)
 			insertEvent(READY, time + xa);
@@ -76,6 +77,7 @@ class State extends GlobalSimulation{
 	
 	private void measure(){
 		//accumulated = accumulatedA;
+		System.out.println("Buffer A:" + bufferA + " , Buffer B:" + bufferB);
 		noMeasurements++;
 		insertEvent(MEASURE, time + 0.1);
 	}

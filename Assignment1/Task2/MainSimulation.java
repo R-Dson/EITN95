@@ -19,6 +19,6 @@ public class MainSimulation extends GlobalSimulation{
     	}
     	
     	// Printing the result of the simulation, in this case a mean value
-    	System.out.println(1.0*actState.accumulatedA + " : " + 1.0*actState.accumulatedB);
+    	System.out.println("accumulated bufferA: " + 1.0*actState.accumulatedA + " , accumulated bufferA: " + 1.0*actState.accumulatedB);
     }
 }
