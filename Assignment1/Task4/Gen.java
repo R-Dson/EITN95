@@ -19,9 +19,9 @@ class Gen extends Proc{
 	public void TreatSignal(Signal x){
 		switch (x.signalType){
 			case READY:{
-				SignalList.SendSignal(ARRIVAL, sendTo, time);
+				SignalList.SendSignal(ARRIVAL, sendTo, time + QS.expMean(5));
 				//SignalList.SendSignal(READY, this, time + (2.0/lambda)*slump.nextDouble());}
-				SignalList.SendSignal(READY, this, time + QS.exp(lambda));}
+				SignalList.SendSignal(READY, this, time + QS.expLambda(lambda));}
 				break;
 		}
 	}

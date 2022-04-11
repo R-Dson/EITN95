@@ -21,9 +21,11 @@ public class MainSimulation extends Global{
 
     	QS Q1 = new QS();
     	Q1.sendTo = null;
+		// probability of special person
+		Q1.pSpecial = 0.1;
 
     	Gen Generator = new Gen();
-    	Generator.lambda = 4; //Generator ska generera nio kunder per sekund  //Generator shall generate 9 customers per second
+    	Generator.lambda = 5; //Generator ska generera nio kunder per sekund  //Generator shall generate 9 customers per second
     	Generator.sendTo = Q1; //De genererade kunderna ska skickas till ksystemet QS  // The generated customers shall be sent to Q1
 
     	//Hr nedan skickas de frsta signalerna fr att simuleringen ska komma igng.
@@ -36,7 +38,7 @@ public class MainSimulation extends Global{
     	// Detta r simuleringsloopen:
     	// This is the main loop
 
-    	while (Q1.accumulated < 1000){
+    	while ((Q1.totalArrivedNormal+Q1.totalArrivedSpecial) < 1000){
     		actSignal = SignalList.FetchSignal();
     		time = actSignal.arrivalTime;
     		actSignal.destination.TreatSignal(actSignal);
@@ -48,8 +50,12 @@ public class MainSimulation extends Global{
     	System.out.println("Time:" + time);
     	System.out.println("Mean number of customers in queuing system: " + 1.0*Q1.accumulated/Q1.noMeasurements);
     	System.out.println("Total customers in queuing system: " + 1.0*Q1.accumulated);
-    	System.out.println("Number of normal customers in queuing system: " + 1.0*Q1.normal);
-    	System.out.println("Number of speciel customers in queuing system: " + 1.0*Q1.special);
+		System.out.println("------------------------------------------------------");
+    	System.out.println("Total number of normal customers arrived: " + 1.0*Q1.totalArrivedNormal);
+    	System.out.println("Total number of normal customers left: " + 1.0*Q1.totalLeftNormal);
+		System.out.println("------------------------------------------------------");
+    	System.out.println("Total number of special customers arrived: " + 1.0*Q1.totalArrivedSpecial);
+    	System.out.println("Total number of special customers left: " + 1.0*Q1.totalLeftSpecial);
 
     }
 }

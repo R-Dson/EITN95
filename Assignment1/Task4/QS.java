@@ -8,30 +8,31 @@ class QS extends Proc{
 	public Proc sendTo;
 	static Random slump = new Random();
 
-	private double pA = 0.1, pB = 0.2, pE = 0.5;
-	public int special = 0, normal = 0;
+	public double pSpecial = 0.1, pE = 0.5;
+	public int special = 0, totalArrivedSpecial = 0, totalLeftSpecial = 0, 
+				normal = 0, totalArrivedNormal = 0, totalLeftNormal = 0;
 
 	public void TreatSignal(Signal x){
 		switch (x.signalType){
-
 			case ARRIVAL:{
-				
 				int person = whoArrives();
 				switch (person) {
 					case 0:
 						special++;
+						totalArrivedSpecial++;
 						break;
-					case 1:
+					/*case 1:
 						special++;
-						break;
-					case 2:
+						break;*/
+					case 1:
 						normal++;
+						totalArrivedNormal++;
 						break;
 				}
 
 				numberInQueue++;
 				if (numberInQueue == 1){
-					SignalList.SendSignal(READY,this, time + exp(4));
+					SignalList.SendSignal(READY,this, time + expMean(4));
 				}
 			} break;
 
@@ -39,43 +40,49 @@ class QS extends Proc{
 				numberInQueue--;
 				if (special > 0) {
 					special--;
+					totalLeftSpecial++;
 				}
-				else if (normal > 0)
-				{
+				else if (normal > 0) {
 					normal--;
+					totalLeftNormal++;
 				}
 
-				if (sendTo != null){
+				/*if (sendTo != null){
 					SignalList.SendSignal(ARRIVAL, sendTo, time + exp(5));
-				}
+				}*/
 
 				if (numberInQueue > 0){
-					SignalList.SendSignal(READY, this, time + exp(4));
+					SignalList.SendSignal(READY, this, time + expMean(4));
 				}
 			} break;
 
 			case MEASURE:{
 				noMeasurements++;
 				accumulated = accumulated + numberInQueue;
-				SignalList.SendSignal(MEASURE, this, time + exp(4));
+				SignalList.SendSignal(MEASURE, this, time + expMean(4));
 			} break;
 		}
 	}
 
 	private int whoArrives()
 	{
-		int length = 10;
+		int length = 1000;
 		int ran = slump.nextInt(length);
-
-		if (ran <= pA*length) 
+		double prob = pSpecial*length;
+		if (ran < prob) 
 			return 0;
-		else if (ran <= (pA + pB)*length)
-			return 1;
+		//else if (ran <= (pA + pB)*length)
+			//return 1;
 		else
-			return 2;
+			return 1;
 	}
 
-	public static double exp(double mean) {
-		return Math.log(1-slump.nextDouble())/-(1/mean);
+	// mean = 1/lambda
+	public static double expMean(double mean) {
+		return Math.log(1-slump.nextDouble())/(-1/mean);
+	}
+
+	public static double expLambda(double lambda) {
+		return expMean(1/lambda);
 	}
 }
