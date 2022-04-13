@@ -5,7 +5,7 @@ class State extends GlobalSimulation{
 	
 	// Here follows the state variables and other variables that might be needed
 	// e.g. for measurements
-	public int numberInQueue = 0, accumulatedA = 0, accumulatedB = 0, noMeasurements = 0;
+	public int numberInQueue = 0, accumulatedA = 0, accumulatedB = 0, noMeasurements = 0, totalBuffer = 0;
 
 	private int bufferA = 0, bufferB = 0, d=1;
 	private double xa = 0.002, xb=0.004, lambda=1/150d;
@@ -63,7 +63,8 @@ class State extends GlobalSimulation{
 		{
 			bufferA--;
 			// sending back the disconnect signal
-			insertEvent(ARRIVALB, time + d);
+			// changes from time + d to time + exp(1)
+			insertEvent(ARRIVALB, time + exp(1));
 			// processing
 		}
 		else // else add to buffer
@@ -77,7 +78,8 @@ class State extends GlobalSimulation{
 	
 	private void measure(){
 		//accumulated = accumulatedA;
-		System.out.println("Buffer A:" + bufferA + " , Buffer B:" + bufferB);
+		totalBuffer += bufferA + bufferB;
+		//System.out.println("Buffer A:" + bufferA + " , Buffer B:" + bufferB);
 		noMeasurements++;
 		insertEvent(MEASURE, time + 0.1);
 	}
