@@ -62,6 +62,8 @@ class QS extends Proc{
 
 			case MEASURE:{
 				noMeasurements++;
+				Gen.totalNumMeasures++;
+				Gen.totalQueueMeasure = Gen.totalQueueMeasure + numberInQueue;
 				accumulated = accumulated + numberInQueue;
 				SignalList.SendSignal(MEASURE, this, time + expMean(0.5));
 			} break;

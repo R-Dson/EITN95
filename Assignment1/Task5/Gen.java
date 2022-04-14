@@ -17,7 +17,7 @@ class Gen extends Proc{
 	// dispatcher time assumed to be 0
 	public ArrayList<QS> listSendTo = new ArrayList<>();
 	public double lambda;  //Hur mnga per sekund som ska generas //How many to generate per second
-	public static int totalArrived = 0, totalArrivedSpecial = 0, totalLeftSpecial = 0, totalArrivedNormal = 0, totalLeftNormal = 0;
+	public static int totalArrived = 0, totalArrivedSpecial = 0, totalLeftSpecial = 0, totalArrivedNormal = 0, totalLeftNormal = 0, totalQueueMeasure = 0, totalNumMeasures = 0;
 	//Hr nedan anger man vad som ska gras nr en signal kommer //What to do when a signal arrives
 
 	public void TreatSignal(Signal x){

@@ -59,6 +59,15 @@ public class MainSimulation extends Global{
 		System.out.println("------------------------------------------------------");
     	System.out.println("Total number of special customers arrived: " + 1.0*Gen.totalArrivedSpecial);
     	System.out.println("Total number of special customers left: " + 1.0*Gen.totalLeftSpecial);
+		System.out.println("------------------------------------------------------");
+		/*int total = 0;
+		int nums = 0;
+		for (QS qs : Generator.listSendTo) {
+			total += qs.accumulated;
+			nums += qs.noMeasurements;
+		}*/
+    	System.out.println("Mean number in queue: " + 1.0*Gen.totalQueueMeasure/ Gen.totalNumMeasures);
+    	//System.out.println("Mean number in queue: " + 1.0*total/ nums);
 
     }
 }
