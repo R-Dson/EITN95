@@ -38,7 +38,7 @@ public class MainSimulation extends Global{
     	// Detta r simuleringsloopen:
     	// This is the main loop
 
-    	while ((Q1.totalArrivedNormal+Q1.totalArrivedSpecial) < 1000){
+    	while ((Q1.totalArrivedNormal + Q1.totalArrivedSpecial) < 1000){
     		actSignal = SignalList.FetchSignal();
     		time = actSignal.arrivalTime;
     		actSignal.destination.TreatSignal(actSignal);

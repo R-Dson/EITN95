@@ -12,6 +12,7 @@ class QS extends Proc{
 	public int special = 0, totalArrivedSpecial = 0, totalLeftSpecial = 0, 
 				normal = 0, totalArrivedNormal = 0, totalLeftNormal = 0;
 
+	private boolean first = true;
 	public void TreatSignal(Signal x){
 		switch (x.signalType){
 			case ARRIVAL:{
@@ -21,9 +22,6 @@ class QS extends Proc{
 						special++;
 						totalArrivedSpecial++;
 						break;
-					/*case 1:
-						special++;
-						break;*/
 					case 1:
 						normal++;
 						totalArrivedNormal++;
@@ -31,8 +29,10 @@ class QS extends Proc{
 				}
 
 				numberInQueue++;
-				if (numberInQueue == 1){
-					SignalList.SendSignal(READY,this, time + expMean(4));
+				
+				if (first){
+					SignalList.SendSignal(READY, this, time);
+					first = false;
 				}
 			} break;
 
@@ -46,20 +46,13 @@ class QS extends Proc{
 					normal--;
 					totalLeftNormal++;
 				}
-
-				/*if (sendTo != null){
-					SignalList.SendSignal(ARRIVAL, sendTo, time + exp(5));
-				}*/
-
-				if (numberInQueue > 0){
-					SignalList.SendSignal(READY, this, time + expMean(4));
-				}
+				SignalList.SendSignal(READY, this, time + expMean(4));
 			} break;
 
 			case MEASURE:{
 				noMeasurements++;
 				accumulated = accumulated + numberInQueue;
-				SignalList.SendSignal(MEASURE, this, time + expMean(4));
+				SignalList.SendSignal(MEASURE, this, time + 0.1);
 			} break;
 		}
 	}
@@ -71,8 +64,6 @@ class QS extends Proc{
 		double prob = pSpecial*length;
 		if (ran < prob) 
 			return 0;
-		//else if (ran <= (pA + pB)*length)
-			//return 1;
 		else
 			return 1;
 	}
