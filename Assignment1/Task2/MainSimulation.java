@@ -10,6 +10,7 @@ public class MainSimulation extends GlobalSimulation{
     	// Some events must be put in the event list at the beginning
         insertEvent(ARRIVALA, 0);  
         insertEvent(MEASURE, 0.1);
+        insertEvent(READY, 0.002);
         
         // The main simulation loop
     	while (actState.noMeasurements < 1000){

@@ -7,11 +7,10 @@ class State extends GlobalSimulation{
 	// e.g. for measurements
 	public int numberInQueue = 0, accumulatedA = 0, accumulatedB = 0, noMeasurements = 0, totalBuffer = 0;
 
-	private int bufferA = 0, bufferB = 0, d=1;
-	private double xa = 0.002, xb=0.004, lambda=1/150d;
+	private int bufferA = 0, bufferB = 0, d = 1;
+	private double xa = 0.002, xb = 0.004, lambda = 1/150d;
 
 	Random slump = new Random(); // This is just a random number generator
-	
 	
 	// The following method is called by the main program each time a new event has been fetched
 	// from the event list in the main loop. 
@@ -40,11 +39,6 @@ class State extends GlobalSimulation{
 		// if there is no B signal then process A signal
 		bufferA++;
 		accumulatedA++;
-
-		if (bufferB == 0){
-			// ready for next signal
-			insertEvent(READY, time + xa);
-		}
 		
 		// recieve next A signal
 		insertEvent(ARRIVALA, time + exp(lambda));
@@ -54,31 +48,28 @@ class State extends GlobalSimulation{
 		// add to B buffer
 		bufferB++;
 		accumulatedB++;
-		// time until ready again
-		insertEvent(READY, time + xb);
 	}
 	
 	private void ready(){
-		if (bufferB == 0 && bufferA > 0)
-		{
+		double delta = xa;
+		
+		// yes
+		if (bufferB > 0) {
+			bufferB--;
+			delta = xb;
+		}
+		// no
+		else if (bufferA > 0){
 			bufferA--;
-			// sending back the disconnect signal
-			// changes from time + d to time + exp(1)
-			insertEvent(ARRIVALB, time + exp(1));
-			// processing
+			insertEvent(ARRIVALB, time + d);
 		}
-		else // else add to buffer
-		{
-			if (bufferB > 0)
-				bufferB--;
-		}
-		if (bufferA > 0)
-			insertEvent(READY, time + xa);
+
+		insertEvent(READY, time + delta);
 	}
 	
 	private void measure(){
 		//accumulated = accumulatedA;
-		totalBuffer += bufferA + bufferB;
+		totalBuffer += (bufferA + bufferB);
 		//System.out.println("Buffer A:" + bufferA + " , Buffer B:" + bufferB);
 		noMeasurements++;
 		insertEvent(MEASURE, time + 0.1);
