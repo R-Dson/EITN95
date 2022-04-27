@@ -63,7 +63,7 @@ class State extends GlobalSimulation{
 			bufferA--;
 			insertEvent(ARRIVALB, time + d);
 		}
-
+		
 		insertEvent(READY, time + delta);
 	}
 	

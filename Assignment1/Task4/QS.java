@@ -37,14 +37,15 @@ class QS extends Proc{
 			} break;
 
 			case READY:{
-				numberInQueue--;
 				if (special > 0) {
 					special--;
 					totalLeftSpecial++;
+					numberInQueue--;
 				}
 				else if (normal > 0) {
 					normal--;
 					totalLeftNormal++;
+					numberInQueue--;
 				}
 				SignalList.SendSignal(READY, this, time + expMean(4));
 			} break;

@@ -22,17 +22,17 @@ public class MainSimulation extends Global{
     	QS Q1 = new QS();
     	Q1.sendTo = null;
 		// probability of special person
-		Q1.pSpecial = 0.1;
+		Q1.pSpecial = 0.8;
 
     	Gen Generator = new Gen();
-    	Generator.lambda = 5; //Generator ska generera nio kunder per sekund  //Generator shall generate 9 customers per second
+    	Generator.lambda = 0.2; //Generator ska generera nio kunder per sekund  //Generator shall generate 9 customers per second
     	Generator.sendTo = Q1; //De genererade kunderna ska skickas till ksystemet QS  // The generated customers shall be sent to Q1
 
     	//Hr nedan skickas de frsta signalerna fr att simuleringen ska komma igng.
     	//To start the simulation the first signals are put in the signal list
 
     	SignalList.SendSignal(READY, Generator, time);
-    	SignalList.SendSignal(MEASURE, Q1, time);
+    	SignalList.SendSignal(MEASURE, Q1, time + 0.1);
 
 
     	// Detta r simuleringsloopen:
@@ -57,8 +57,8 @@ public class MainSimulation extends Global{
     	System.out.println("Total number of special customers arrived: " + Q1.totalArrivedSpecial);
     	System.out.println("Total number of special customers left: " + Q1.totalLeftSpecial);
 		System.out.println("------------------------------------------------------");
-		System.out.println("Average queuing time normal: " + time/(Q1.totalLeftNormal));
-		System.out.println("Average queuing time special: " + time/(Q1.totalLeftSpecial));
+		System.out.println("Average queuing time normal: " + (1.0*Q1.totalArrivedNormal - 1.0*Q1.totalLeftNormal)/time);
+		System.out.println("Average queuing time special: " + (1.0*Q1.totalArrivedSpecial - 1.0*Q1.totalLeftSpecial)/time);
 
     }
 }

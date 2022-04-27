@@ -20,12 +20,11 @@ public class MainSimulation extends Global{
     	// Here process instances are created (two queues and one generator) and their parameters are given values. 
 
     	Gen Generator = new Gen();
-    	Generator.lambda = 5; //Generator ska generera nio kunder per sekund  //Generator shall generate 9 customers per second
+    	Generator.mean = 0.11; //Generator ska generera nio kunder per sekund  //Generator shall generate 9 customers per second
     	//Generator.sendTo = Q1; //De genererade kunderna ska skickas till ksystemet QS  // The generated customers shall be sent to Q1
 
 		for (int i = 0; i < 5; i++) {
 			QS Qtemp = new QS();
-			Qtemp.pSpecial = 0.1;
 			Qtemp.ID = i;
 			Generator.listSendTo.add(Qtemp);
 		}
@@ -54,18 +53,8 @@ public class MainSimulation extends Global{
     	//System.out.println("Mean number of customers in queuing system: " + 1.0*Q1.accumulated/Q1.noMeasurements);
     	//System.out.println("Total customers in queuing system: " + 1.0*Q1.accumulated);
 		System.out.println("------------------------------------------------------");
-    	System.out.println("Total number of normal customers arrived: " + 1.0*Gen.totalArrivedNormal);
-    	System.out.println("Total number of normal customers left: " + 1.0*Gen.totalLeftNormal);
-		System.out.println("------------------------------------------------------");
-    	System.out.println("Total number of special customers arrived: " + 1.0*Gen.totalArrivedSpecial);
-    	System.out.println("Total number of special customers left: " + 1.0*Gen.totalLeftSpecial);
-		System.out.println("------------------------------------------------------");
-		/*int total = 0;
-		int nums = 0;
-		for (QS qs : Generator.listSendTo) {
-			total += qs.accumulated;
-			nums += qs.noMeasurements;
-		}*/
+    	System.out.println("Total number of totalQueueMeasure: " + 1.0*Gen.totalQueueMeasure);
+
     	System.out.println("Mean number in queue: " + 1.0*Gen.totalQueueMeasure/ Gen.totalNumMeasures);
     	//System.out.println("Mean number in queue: " + 1.0*total/ nums);
 

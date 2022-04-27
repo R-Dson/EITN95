@@ -20,7 +20,8 @@ class Gen extends Proc{
 		switch (x.signalType){
 			case READY:{
 				SignalList.SendSignal(ARRIVAL, sendTo, time);
-				SignalList.SendSignal(READY, this, time + QS.expLambda(lambda));}
+				SignalList.SendSignal(READY, this, time + QS.expLambda(lambda));
+			}
 				break;
 		}
 	}
