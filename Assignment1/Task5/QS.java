@@ -9,35 +9,25 @@ class QS extends Proc {
 	static Random slump = new Random();
 
 	public double ID = 0;
-
-	private boolean first = true;
 	public void TreatSignal(Signal x){
 		switch (x.signalType){
 			case ARRIVAL:{
-				numberInQueue++;
-				if (first){
-					SignalList.SendSignal(READY, this, time);
-					first = false;
+				
+				if (numberInQueue == 0) {
+					SignalList.SendSignal(READY, this, time + expMean(0.5));
 				}
+				numberInQueue++;
 			} break;
 
 			case READY:{
-				if (numberInQueue > 0) {
-					numberInQueue--;
+				numberInQueue--;
+				if(numberInQueue > 0) {
+					SignalList.SendSignal(READY, this, time + expMean(0.5));
 				}
 				
-				SignalList.SendSignal(READY, this, time + expMean(0.5));
 			} break;
 
-			case MEASURE:{
-				noMeasurements++;
-
-				Gen.totalNumMeasures++;
-				Gen.totalQueueMeasure = Gen.totalQueueMeasure + numberInQueue;
-
-				accumulated = accumulated + numberInQueue;
-				SignalList.SendSignal(MEASURE, this, time + 0.5);
-			} break;
+		
 		}
 	}
 

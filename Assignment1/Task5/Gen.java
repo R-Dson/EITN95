@@ -18,6 +18,8 @@ class Gen extends Proc {
 	public ArrayList<QS> listSendTo = new ArrayList<>();
 	public double mean;  //Hur mnga per sekund som ska generas //How many to generate per second
 	public static int totalArrived = 0, totalQueueMeasure = 0, totalNumMeasures = 0;
+	public int totalInQueue = 0;
+	public int numberMeasurements = 0;
 	//Hr nedan anger man vad som ska gras nr en signal kommer //What to do when a signal arrives
 
 	public void TreatSignal(Signal x){
@@ -25,8 +27,18 @@ class Gen extends Proc {
 			case READY:{
 				QS reciever = (QS)getRandomProc();
 				SignalList.SendSignal(ARRIVAL, reciever, time);
-				SignalList.SendSignal(READY, this, time + mean/2 + slump.nextDouble());}
+				double tmp = slump.nextDouble()*0.11*2;
+				SignalList.SendSignal(READY, this, time+tmp);}
 				break;
+			case MEASURE:{
+				for(int i = 0;i<5;i++) {
+					totalInQueue+=listSendTo.get(i).numberInQueue;
+				}
+			
+				numberMeasurements++;
+				SignalList.SendSignal(MEASURE, this, time+1);
+				break;
+			}
 		}
 	}
 

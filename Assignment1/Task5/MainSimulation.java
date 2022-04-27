@@ -33,6 +33,7 @@ public class MainSimulation extends Global{
     	//To start the simulation the first signals are put in the signal list
 
     	SignalList.SendSignal(READY, Generator, time);
+    	SignalList.SendSignal(MEASURE, Generator, 0);
     	for (QS Q : Generator.listSendTo) {
 			SignalList.SendSignal(MEASURE, Q, time);
 		}
@@ -49,13 +50,14 @@ public class MainSimulation extends Global{
     	//Slutligen skrivs resultatet av simuleringen ut nedan:
     	//Finally the result of the simulation is printed below:
 
-    	System.out.println("Time:" + time);
+    //	System.out.println("Time:" + time);
     	//System.out.println("Mean number of customers in queuing system: " + 1.0*Q1.accumulated/Q1.noMeasurements);
     	//System.out.println("Total customers in queuing system: " + 1.0*Q1.accumulated);
-		System.out.println("------------------------------------------------------");
-    	System.out.println("Total number of totalQueueMeasure: " + 1.0*Gen.totalQueueMeasure);
-
-    	System.out.println("Mean number in queue: " + 1.0*Gen.totalQueueMeasure/ Gen.totalNumMeasures);
+	//	System.out.println("------------------------------------------------------");
+    //	System.out.println("Total number of totalQueueMeasure: " + 1.0*Gen.totalQueueMeasure);
+    	System.out.println(Generator.totalInQueue + " " + Generator.numberMeasurements);
+    	System.out.println(1.0*Generator.totalInQueue/Generator.numberMeasurements);
+    //	System.out.println("Mean number in queue: " + 1.0*Gen.totalQueueMeasure/ Gen.totalNumMeasures);
     	//System.out.println("Mean number in queue: " + 1.0*total/ nums);
 
     }
