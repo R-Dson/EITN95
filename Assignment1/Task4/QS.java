@@ -1,8 +1,6 @@
 import java.util.*;
 import java.io.*;
 
-// This class defines a simple queuing system with one server. It inherits Proc so that we can use time and the
-// signal names without dot notation
 class QS extends Proc{
 	public int numberInQueue = 0, accumulated, noMeasurements;
 	public Proc sendTo;
