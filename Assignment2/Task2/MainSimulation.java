@@ -13,7 +13,7 @@ public class MainSimulation extends Global{
     	Gen Generator = new Gen();
     	Generator.lambda = 4;
 		Generator.sendTo = Q1; 
-		int days = 30;
+		int days = 1000;
 		
     	SignalList.SendSignal(READY, Generator, time);
     	SignalList.SendSignal(MEASURE, Q1, time);
@@ -50,7 +50,7 @@ public class MainSimulation extends Global{
         System.out.println("95% confidence interval:");
         System.out.println("\t" + String.format("%.4f", mean) + " ± " + String.format("%.4f", 1.96 * std));
     }
-	
+
 	private static double calcStandardDevEstimate(double mMean, List<Double> means) {
         double sum = 0;
         int M = means.size();
