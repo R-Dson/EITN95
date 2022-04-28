@@ -7,12 +7,15 @@ class QS extends Proc{
 	public ArrayList<ArrayList<Double>> endTime = new ArrayList<>();
 	public ArrayList<Double> day = new ArrayList<>();
 
+	public ArrayList<Double> service = new ArrayList<>();
+	public double totaltime = 0;
+
 	public void TreatSignal(Signal x){
 		switch (x.signalType){
 			case ARRIVAL:{
 				numberInQueue++;
 				if (numberInQueue == 1){
-					SignalList.SendSignal(READY,this, time + (10 + 10*slump.nextDouble())/60);
+					SignalList.SendSignal(READY,this, time + serviceTime());
 				}
 			} break;
 
@@ -20,7 +23,7 @@ class QS extends Proc{
 				numberInQueue--;
 				day.add(time % 24);
 				if (numberInQueue > 0){
-					SignalList.SendSignal(READY, this, time + (10 + 10*slump.nextDouble())/60);
+					SignalList.SendSignal(READY, this, time + serviceTime());
 				}
 			} break;
 
@@ -30,7 +33,14 @@ class QS extends Proc{
 				SignalList.SendSignal(MEASURE, this, time + 0.5);
 			} break;
 		}
-		
+	}
+
+	private double serviceTime()
+	{
+		double serviceT = (10 + 10*slump.nextDouble())/60;
+		service.add(serviceT);
+		totaltime += serviceT;
+		return serviceT;
 	}
 
 	// mean = 1/lambda

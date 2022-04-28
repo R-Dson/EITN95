@@ -15,21 +15,23 @@ class Gen extends Proc{
 		switch (x.signalType){
 			case READY:{
 				if (time < 9)
-				{
 					time = 9;
-					sendTo.day = new ArrayList<>();
-				}
 				if (day != lastday)
 				{
 					lastday = day;
 					if (sendTo != null)
 					{
+						// for a)
 						sendTo.endTime.add(sendTo.day);
 						sendTo.day = new ArrayList<>();
+
+						// for b)
+						//sendTo.durations.add(sendTo.service);
+						//sendTo.service = new ArrayList<>();
 					}
 				}
 				SignalList.SendSignal(ARRIVAL, sendTo, time);
-				
+
 				double time24 = time % 24;
 				if (9 <= time24 && time24 <= 17) {
 					SignalList.SendSignal(READY, this, time + QS.expLambda(lambda));
