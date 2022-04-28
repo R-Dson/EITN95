@@ -18,7 +18,7 @@ public class MainSimulation extends Global{
     	SignalList.SendSignal(READY, Generator, time);
     	SignalList.SendSignal(MEASURE, Q1, time);
 
-    	while ((int)(time/24) < days){
+    	while (time/24 < days){
     		actSignal = SignalList.FetchSignal();
     		time = actSignal.arrivalTime;
     		actSignal.destination.TreatSignal(actSignal);
