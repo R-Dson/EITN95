@@ -16,7 +16,7 @@ class Gen extends Proc {
 	public void TreatSignal(Signal x){
 		switch (x.signalType){
 			case READY:{
-				QS reciever = (QS)getRandomProc();
+				QS reciever = (QS)getRoundRobinProc();
 				SignalList.SendSignal(ARRIVAL, reciever, time);
 				double tmp = slump.nextDouble()*mean*2;
 				SignalList.SendSignal(READY, this, time+tmp);}

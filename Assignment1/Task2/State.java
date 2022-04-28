@@ -46,15 +46,16 @@ class State extends GlobalSimulation{
 		double delta = xa;
 		
 		// yes
-		if (bufferB > 0) {
+		if (bufferA > 0){
+			bufferA--;
+			insertEvent(ARRIVALB, time + d);
+		}
+		else if (bufferB > 0) {
 			bufferB--;
 			delta = xb;
 		}
 		// no
-		else if (bufferA > 0){
-			bufferA--;
-			insertEvent(ARRIVALB, time + d);
-		}
+		//else 
 		
 		insertEvent(READY, time + delta);
 	}
