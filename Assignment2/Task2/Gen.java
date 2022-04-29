@@ -10,10 +10,13 @@ class Gen extends Proc{
 
 	int day = 0;
 	int lastday = 0;
+
+	public ArrayList<Double> endOfDay = new ArrayList<>();
 	
 	public void TreatSignal(Signal x){
 		switch (x.signalType){
 			case READY:{
+				// used in the first 24h window
 				if (time < 9)
 					time = 9;
 				if (day != lastday)
@@ -22,12 +25,8 @@ class Gen extends Proc{
 					if (sendTo != null)
 					{
 						// for a)
-						sendTo.endTime.add(sendTo.day);
+						endOfDay.add(sendTo.day.get(sendTo.day.size()-1));
 						sendTo.day = new ArrayList<>();
-
-						// for b)
-						//sendTo.durations.add(sendTo.service);
-						//sendTo.service = new ArrayList<>();
 					}
 				}
 				SignalList.SendSignal(ARRIVAL, sendTo, time);

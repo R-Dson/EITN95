@@ -2,14 +2,16 @@ import java.util.*;
 import java.io.*;
 
 class QS extends Proc{
-	public int numberInQueue = 0, accumulated, noMeasurements;
+	public int numberInQueue = 0, noMeasurements;
 	static Random slump = new Random();
-	public ArrayList<ArrayList<Double>> endTime = new ArrayList<>();
+
+	// for a)
 	public ArrayList<Double> day = new ArrayList<>();
-
+	// for b)
 	public ArrayList<Double> service = new ArrayList<>();
-	public double totaltime = 0;
-
+	
+	
+	//public double totaltime = 0, accumulated;
 	public void TreatSignal(Signal x){
 		switch (x.signalType){
 			case ARRIVAL:{
@@ -29,7 +31,7 @@ class QS extends Proc{
 
 			case MEASURE:{
 				noMeasurements++;
-				accumulated = accumulated + numberInQueue;
+				//accumulated = accumulated + totaltime;
 				SignalList.SendSignal(MEASURE, this, time + 0.5);
 			} break;
 		}
@@ -39,7 +41,7 @@ class QS extends Proc{
 	{
 		double serviceT = (10 + 10*slump.nextDouble())/60;
 		service.add(serviceT);
-		totaltime += serviceT;
+		//totaltime += serviceT;
 		return serviceT;
 	}
 
