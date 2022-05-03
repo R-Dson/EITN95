@@ -51,6 +51,18 @@ public class MainSimulation extends Global{
 		std2 *= 60;
 		mean2 *= 60;
 		print("In minutes ---------------------", mean2, std2);
+		writeResultsToFile(Generator.endOfDay, "m.txt");
+    }
+
+	static <T> void writeResultsToFile(Iterable<T> ys, String fileName) throws IOException {
+        File file = new File(fileName);
+        FileWriter fw = new FileWriter(file);
+
+        for (T y : ys) {
+            fw.write(y + "\n");
+        }
+
+        fw.close();
     }
 
 	private static void print(String string, double mean, double std)

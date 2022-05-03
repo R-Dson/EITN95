@@ -29,10 +29,10 @@ class Gen extends Proc{
 						sendTo.day = new ArrayList<>();
 					}
 				}
-				SignalList.SendSignal(ARRIVAL, sendTo, time);
-
+				
 				double time24 = time % 24;
 				if (9 <= time24 && time24 <= 17) {
+					SignalList.SendSignal(ARRIVAL, sendTo, time);
 					SignalList.SendSignal(READY, this, time + QS.expLambda(lambda));
 				}
 				else
