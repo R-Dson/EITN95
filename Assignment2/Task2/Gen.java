@@ -25,7 +25,10 @@ class Gen extends Proc{
 					if (sendTo != null)
 					{
 						// for a)
-						endOfDay.add(sendTo.day.get(sendTo.day.size()-1));
+						double end = sendTo.day.get(sendTo.day.size()-1);
+						if (end < 17)
+							end = 17;
+						endOfDay.add(end);
 						sendTo.day = new ArrayList<>();
 					}
 				}
