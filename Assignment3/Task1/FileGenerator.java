@@ -1,6 +1,7 @@
 
 import java.io.*;
 import java.util.Random;
+import java.util.ArrayList;
 
 public class FileGenerator {
     String name = "config.txt";
@@ -16,13 +17,27 @@ public class FileGenerator {
         double Tp = 1;
 
         Random slump = new Random();
-        Integer[] x = new Integer[n];
-        Integer[] y = new Integer[n];
+        ArrayList<Integer> xlist = new ArrayList<>();
+        ArrayList<Integer> ylist = new ArrayList<>();
 
         for (int i = 0; i < n; i++) {
-            x[i] = slump.nextInt(10000);
-            y[i] = slump.nextInt(10000);
+            int xSlump = slump.nextInt(10000);
+            int ySlump = slump.nextInt(10000);
+
+            // Can't overlap
+            while (xlist.contains(xSlump) &&  ylist.contains(ySlump))
+            {
+                xSlump = slump.nextInt(10000);
+                ySlump = slump.nextInt(10000);
+            }
+
+            xlist.add(xSlump);
+            xlist.add(ySlump);
+            
         }
+
+        Integer[] x = xlist.toArray(new Integer[n]);
+        Integer[] y = ylist.toArray(new Integer[n]);
 
         config c = new config(n, ts, Tp, r, x, y);
 
