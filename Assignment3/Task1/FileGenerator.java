@@ -32,7 +32,7 @@ public class FileGenerator {
             }
 
             xlist.add(xSlump);
-            xlist.add(ySlump);
+            ylist.add(ySlump);
             
         }
 
