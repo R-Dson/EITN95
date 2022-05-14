@@ -19,6 +19,24 @@ public class MainSimulation extends Global{
     	QS Q1 = new QS();
     	Q1.sendTo = null;
 
+		ArrayList<QS> allNodes = new ArrayList<>();
+		for (int i = 0; i < c.n; i++) {
+			QS node = new QS();
+			node.x = c.x[i];
+			node.y = c.y[i];
+			node.id = i;
+			node.r = c.r;
+			allNodes.add(node);
+		}
+
+		for (QS node : allNodes) {
+			for (QS node2 : allNodes) {
+				if (node != node2 && Math.sqrt((node2.x - node.x)^2 + (node2.y - node.y)^2) <= node.r) {
+					node.InRange.add(node2);
+				}
+			}
+		}
+
     	Gen Generator = new Gen();
     	Generator.lambda = 9; 
     	Generator.sendTo = Q1;
