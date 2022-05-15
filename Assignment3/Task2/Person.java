@@ -8,6 +8,7 @@ public class Person {
 	private int direction;
 	private int speed;
 	public int id;
+	public boolean meeting;
 	public double[] meetings;
 	private static final int NORTH = 0, NORTHWEST = 1, WEST = 2, SOUTHWEST = 3, SOUTH = 4, SOUTHEAST = 5, EAST = 6,
 			NORTHEAST = 7;
@@ -20,41 +21,42 @@ public class Person {
 		y = random.nextInt(20) + 0.5;
 		changeDirection();
 		meetings = new double[20];
+		meeting = false;
 	}
 
 	public void move() {
 		double oldx = x;
 		double oldy = y;
 		switch (direction) {
-			case NORTH:
-				y++;
-				break;
-			case NORTHWEST:
-				y++;
-				x--;
-				break;
-			case WEST:
-				x--;
-				break;
-			case SOUTHWEST:
-				x--;
-				y--;
-				break;
-			case SOUTH:
-				y--;
-				break;
-			case SOUTHEAST:
-				x++;
-				y--;
-				break;
+		case NORTH:
+			y++;
+			break;
+		case NORTHWEST:
+			y++;
+			x--;
+			break;
+		case WEST:
+			x--;
+			break;
+		case SOUTHWEST:
+			x--;
+			y--;
+			break;
+		case SOUTH:
+			y--;
+			break;
+		case SOUTHEAST:
+			x++;
+			y--;
+			break;
 
-			case EAST:
-				x++;
-				break;
-			case NORTHEAST:
-				x++;
-				y++;
-				break;
+		case EAST:
+			x++;
+			break;
+		case NORTHEAST:
+			x++;
+			y++;
+			break;
 		}
 		if (x < 0 || x > 20 || y < 0 || y > 20) {// out of bounds
 			x = oldx;
@@ -86,11 +88,16 @@ public class Person {
 	}
 
 	public double timeto() {
+		double tmp = 0;
 		if (direction == NORTHEAST || direction == NORTHWEST || direction == SOUTHWEST || direction == SOUTHEAST) {
-			return Math.sqrt(1.0 / 2) / speed;
+
+			tmp = Math.sqrt(1.0 / 2) / speed;
+
 		} else {
-			return (1.0 / 2) / speed;
+
+			tmp = (1.0 / 2) / speed;
 		}
+		return tmp;
 
 	}
 
@@ -113,9 +120,8 @@ public class Person {
 
 		for (int i = 0; i < 20; i++) {
 			if (i != id) {
-				sb.append((int)meetings[i] + "\t");
+				sb.append(meetings[i] + " ");
 			}
-			
 
 		}
 		return sb.toString();

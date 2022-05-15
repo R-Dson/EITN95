@@ -1,4 +1,3 @@
-
 class Signal{
 	public Proc destination;
 	public Person p;

@@ -17,11 +17,8 @@ public class MainSimulation extends Global {
 			SignalList.SendSignal(MOVE, p, Q1, time);
 		}
 
-		// SignalList.SendSignal(MOVE, p1, Q1, time);
-		// SignalList.SendSignal(MOVE, p1, Q1, time);
-
+	
 		while (!Q1.done()) {
-			System.out.println(time);
 			actSignal = SignalList.FetchSignal();
 			time = actSignal.arrivalTime;
 			actSignal.destination.TreatSignal(actSignal);
