@@ -26,15 +26,16 @@ public class MainSimulation extends Global {
 			time = actSignal.arrivalTime;
 			actSignal.destination.TreatSignal(actSignal);
 		}
-		
+		int offset = 1;
 		for (int i = 0; i < 20; i++) {
 			System.out.println(Q1.list.get(i).printMeetings());
 			double[] l = Q1.list.get(i).meetings;
 			
 			ArrayList<Double> t = new ArrayList<>();
-			for (double d : l) {
-				t.add(d);
+			for (int j = offset; j < l.length; j++) {
+				t.add(l[j]);
 			}
+			offset++;
 			writeResultsToFile(t, "m.txt");
 		}
 	}
