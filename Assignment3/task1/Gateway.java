@@ -3,7 +3,9 @@ import java.util.ArrayList;
 public class Gateway extends Proc {
   int nbrOfTransmissions = 0;
   int nbrOfSuccess = 0;
-  ArrayList<Double> zs = new ArrayList<>();
+  ArrayList<Double> Tputs = new ArrayList<>();
+
+  ArrayList<Double> packageLossProbs = new ArrayList<>();
 
   double radius;
   double Tp;
@@ -36,12 +38,16 @@ public class Gateway extends Proc {
     Transmission latest = new Transmission(newCoord, radius);
 
     for (Transmission transmission : transmissions) {
-      // latest.isInterrupted = true;
-      // transmission.isInterrupted = true;
-      if (transmission.overlap(newCoord)) {
-        latest.isInterrupted = true;
-        transmission.isInterrupted = true;
-      }
+      latest.isInterrupted = true;
+      transmission.isInterrupted = true;
+      /*
+       * // GATEWAY CAN ONLY HANDLE ONE MESSAGE AT ANY GIVEN TIME
+       * if (transmission.overlap(newCoord)) {
+       * latest.isInterrupted = true;
+       * transmission.isInterrupted = true;
+       * }
+       * 
+       */
     }
     transmissions.add(latest);
     SignalList.SendSignal(END_OF_ONE_TRANSMISSION, this, time + Tp);
@@ -54,8 +60,10 @@ public class Gateway extends Proc {
   }
 
   private void measure() {
-    double tp_now = (double) nbrOfSuccess / (double) nbrOfTransmissions;
-    zs.add(tp_now);
+    Tputs.add((double) nbrOfSuccess / time);
+    double denom = (double) nbrOfTransmissions - nbrOfSuccess;
+    double res = denom / (double) nbrOfTransmissions;
+    packageLossProbs.add(res);
     SignalList.SendSignal(MEASURE, this, time + timeBetweenSamples);
   }
 }

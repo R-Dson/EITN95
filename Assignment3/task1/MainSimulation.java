@@ -40,7 +40,7 @@ public class MainSimulation extends Global {
       actSignal.destination.TreatSignal(actSignal);
     }
 
-    double meanSum = gateway.zs.stream()
+    double meanSum = gateway.Tputs.stream()
         .reduce(0.0, (subtotal, element) -> subtotal + element);
     double mean = (1.0 / config.nbrOfMeasurements) * meanSum;
 
@@ -129,7 +129,7 @@ public class MainSimulation extends Global {
       actSignal.destination.TreatSignal(actSignal);
     }
 
-    double meanSum = gateway.zs.stream()
+    double meanSum = gateway.Tputs.stream()
         .reduce(0.0, (subtotal, element) -> subtotal + element);
     double mean = (1.0 / config.nbrOfMeasurements) * meanSum;
 
