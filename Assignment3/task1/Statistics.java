@@ -9,6 +9,11 @@ public class Statistics {
     return ((mean * 2 - 0) * rnd);
   }
 
+  public static double uniformDistribution(double a, double b) {
+    double rnd = rand.nextDouble();
+    return ((b - a) * rnd + a);
+  }
+
   public static double expDistPdf(double lambda) {
     return (-1.0) * Math.log(1 - rand.nextDouble()) / lambda;
   }

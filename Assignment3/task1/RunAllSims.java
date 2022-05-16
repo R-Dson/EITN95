@@ -53,10 +53,10 @@ public class RunAllSims extends Global {
       System.out.println("----------------");
     }
 
-    writeResultsToFile(mmTput, "a3p1_Tput_mMean.txt");
-    writeResultsToFile(stdsTput, "a3p1_Tput_stds.txt");
-    writeResultsToFile(mmPLoss, "a3p2_PLoss_mMean.txt");
-    writeResultsToFile(stdsPLoss, "a3p2_PLoss_stds.txt");
+    writeResultsToFile(mmTput, "a3p3_Tput_mMean.txt");
+    writeResultsToFile(stdsTput, "a3p3_Tput_stds.txt");
+    writeResultsToFile(mmPLoss, "a3p3_PLoss_mMean.txt");
+    writeResultsToFile(stdsPLoss, "a3p3_PLoss_stds.txt");
   }
 
   static <T> void writeResultsToFile(Iterable<T> ys, String fileName) {

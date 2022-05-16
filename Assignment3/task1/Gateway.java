@@ -40,17 +40,22 @@ public class Gateway extends Proc {
     for (Transmission transmission : transmissions) {
       latest.isInterrupted = true;
       transmission.isInterrupted = true;
-      /*
-       * // GATEWAY CAN ONLY HANDLE ONE MESSAGE AT ANY GIVEN TIME
-       * if (transmission.overlap(newCoord)) {
-       * latest.isInterrupted = true;
-       * transmission.isInterrupted = true;
-       * }
-       * 
-       */
     }
     transmissions.add(latest);
     SignalList.SendSignal(END_OF_ONE_TRANSMISSION, this, time + Tp);
+  }
+
+  // FIFO
+  boolean senseForOtherSenders(Coord newCoord) {
+
+    boolean isWithinRange = false;
+    for (Transmission transmission : transmissions) {
+      // check if within listening range
+      if (transmission.overlap(newCoord))
+        isWithinRange = true;
+    }
+
+    return isWithinRange;
   }
 
   private void endOfTransmission() {
