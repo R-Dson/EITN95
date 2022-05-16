@@ -1,4 +1,3 @@
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -18,12 +17,15 @@ public class Statistics {
     return Math.log(1 - rand.nextDouble()) / (-1 / mean);
   }
 
-  static void confidenceInterval(List<Double> zs) {
+  static double calcMean(List<Double> zs) {
     int N = zs.size();
-
     double meanSum = zs.stream()
         .reduce(0.0, (subtotal, element) -> subtotal + element);
-    double mMean = meanSum / (double) N;
+    return meanSum / (double) N;
+  }
+
+  static void confidenceInterval(List<Double> zs) {
+    double mMean = calcMean(zs);
 
     double std = calcStandardDevEstimate(mMean, zs);
 
@@ -34,7 +36,7 @@ public class Statistics {
     System.out.println("\t" + String.format("%.4f", mMean) + " ± " + String.format("%.4f", 1.96 * std));
   }
 
-  private static double calcStandardDevEstimate(double mMean, List<Double> means) {
+  static double calcStandardDevEstimate(double mMean, List<Double> means) {
     double sum = 0;
     int M = means.size();
     for (int i = 0; i < M; i++) {
@@ -43,5 +45,42 @@ public class Statistics {
 
     // NOTE! Using Bessel's correction, see wiki
     return Math.sqrt(sum / (double) (M - 1));
+  }
+
+  static boolean checkCIOverlap(List<Double> means, List<Double> stds) {
+    boolean isOverlap = false;
+    for (int i = 0; i < means.size() - 1; i++) {
+      for (int j = 1; j < means.size(); j++) {
+        double mean = means.get(i);
+        double std = stds.get(i);
+        double nextMean = means.get(j);
+        double nextStd = stds.get(j);
+
+        // check right
+        if (mean + 1.96 * std < nextMean - 1.96 * nextStd) {
+          System.out.println("95% confidence interval:");
+          System.out.println(
+              "\t" + String.format("%.4f", mean - 1.96 * std) + " ± " + String.format("%.4f", mean + 1.96 * std));
+          System.out.println(
+              "\t" + String.format("%.4f", nextMean - 1.96 * nextStd) + " ± "
+                  + String.format("%.4f", nextMean + 1.96 * nextStd));
+          isOverlap = true;
+        }
+
+        // check left
+        if (mean - 1.96 * std > nextMean + 1.96 * nextStd) {
+          System.out.println("95% confidence interval:");
+          System.out.println(
+              "\t" + String.format("%.4f", mean - 1.96 * std) + " ± " + String.format("%.4f", mean + 1.96 * std));
+          System.out.println(
+              "\t" + String.format("%.4f", nextMean - 1.96 * nextStd) + " ± "
+                  + String.format("%.4f", nextMean + 1.96 * nextStd));
+
+          isOverlap = true;
+        }
+
+      }
+    }
+    return isOverlap;
   }
 }

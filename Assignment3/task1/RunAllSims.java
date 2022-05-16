@@ -1,4 +1,7 @@
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -7,33 +10,69 @@ public class RunAllSims extends Global {
   static int[] ns = { 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000 };
 
   public static void main(String[] args) throws IOException {
-    run();
+    runAllNs();
   }
 
-  private static void run() {
+  /*
+   * Calculates the mean of means of both Tput and Package Loss. These
+   * are stored in files, see bottom of method.
+   */
+  private static void runAllNs() {
     ArrayList<Double> mmTput = new ArrayList<>();
+    ArrayList<Double> stdsTput = new ArrayList<>();
     ArrayList<Double> mmPLoss = new ArrayList<>();
+    ArrayList<Double> stdsPLoss = new ArrayList<>();
+
+    int iter = 15;
     Config config;
-    double mean;
-    int i = 0;
+    ArrayList<Double> meansT;
+    ArrayList<Double> meansP;
     for (int n : ns) {
-      n = ns[ns.length - 1];
       System.out.println("----------------");
       System.err.println("n = " + n);
 
       config = getConfig(n);
-      ArrayList<Double> means = runOneSim(config);
-      mmTput.add(means.get(0));
-      mmPLoss.add(means.get(1));
 
-      System.out.println("Tput = " + means.get(0));
-      System.out.println("PLos = " + means.get(1));
+      meansT = new ArrayList<>();
+      meansP = new ArrayList<>();
+      for (int i = 0; i < iter; i++) {
+        System.out.println("iteration: " + i);
+        ArrayList<Double> res = runOneSim(config, false);
+        meansT.add(res.get(0));
+        meansP.add(res.get(1));
+      }
+
+      double mMean = Statistics.calcMean(meansT);
+      mmTput.add(mMean);
+      stdsTput.add(Statistics.calcStandardDevEstimate(mMean, meansT));
+
+      mMean = Statistics.calcMean(meansP);
+      mmPLoss.add(mMean);
+      stdsPLoss.add(Statistics.calcStandardDevEstimate(mMean, meansP));
+
       System.out.println("----------------");
-      break;
+    }
+
+    writeResultsToFile(mmTput, "a3p1_Tput_mMean.txt");
+    writeResultsToFile(stdsTput, "a3p1_Tput_stds.txt");
+    writeResultsToFile(mmPLoss, "a3p2_PLoss_mMean.txt");
+    writeResultsToFile(stdsPLoss, "a3p2_PLoss_stds.txt");
+  }
+
+  static <T> void writeResultsToFile(Iterable<T> ys, String fileName) {
+    File file = new File(fileName);
+    try (FileWriter fw = new FileWriter(file, StandardCharsets.UTF_8)) {
+      for (T y : ys) {
+        fw.write(y + "\n");
+      }
+
+      fw.close();
+    } catch (IOException e) {
+      e.printStackTrace();
     }
   }
 
-  public static ArrayList<Double> runOneSim(Config config) {
+  public static ArrayList<Double> runOneSim(Config config, boolean isVerbose) {
     reset();
     new SignalList();
     Signal actSignal;
@@ -61,20 +100,19 @@ public class RunAllSims extends Global {
       actSignal.destination.TreatSignal(actSignal);
     }
 
-    double meanSum = gateway.Tputs.stream()
-        .reduce(0.0, (subtotal, element) -> subtotal + element);
-    double meanTput = (1.0 / config.nbrOfMeasurements) * meanSum;
+    double meanTput = Statistics.calcMean(gateway.Tputs);
 
-    meanSum = gateway.packageLossProbs.stream()
-        .reduce(0.0, (subtotal, element) -> subtotal + element);
-    double meanPloss = (1.0 / config.nbrOfMeasurements) * meanSum;
+    double meanPloss = Statistics.calcMean(gateway.PLosses);
+
     ArrayList<Double> results = new ArrayList<>();
     results.add(meanTput);
     results.add(meanPloss);
 
-    System.out.println("nbr of transmissions: " + gateway.nbrOfTransmissions);
-    System.out.println("nbr of success: " + gateway.nbrOfSuccess);
-    System.out.println("success ratio: " + (double) gateway.nbrOfSuccess / (double) gateway.nbrOfTransmissions);
+    if (isVerbose) {
+      System.out.println("nbr of transmissions: " + gateway.nbrOfTransmissions);
+      System.out.println("nbr of success: " + gateway.nbrOfSuccess);
+      System.out.println("success ratio: " + (double) gateway.nbrOfSuccess / (double) gateway.nbrOfTransmissions);
+    }
 
     return results;
   }
@@ -83,8 +121,8 @@ public class RunAllSims extends Global {
     int ts = 4000;
     double r = 7000;
     double Tp = 1;
-    double timeBetweenSamples = 2000;
-    int nbrOfMeasurements = 100;
+    double timeBetweenSamples = 4000;
+    int nbrOfMeasurements = 10;
 
     Random slump = new Random();
     ArrayList<Integer> xlist = new ArrayList<>();

@@ -5,7 +5,7 @@ public class Gateway extends Proc {
   int nbrOfSuccess = 0;
   ArrayList<Double> Tputs = new ArrayList<>();
 
-  ArrayList<Double> packageLossProbs = new ArrayList<>();
+  ArrayList<Double> PLosses = new ArrayList<>();
 
   double radius;
   double Tp;
@@ -63,7 +63,7 @@ public class Gateway extends Proc {
     Tputs.add((double) nbrOfSuccess / time);
     double denom = (double) nbrOfTransmissions - nbrOfSuccess;
     double res = denom / (double) nbrOfTransmissions;
-    packageLossProbs.add(res);
+    PLosses.add(res);
     SignalList.SendSignal(MEASURE, this, time + timeBetweenSamples);
   }
 }
