@@ -29,6 +29,16 @@ public class Statistics {
     return meanSum / (double) N;
   }
 
+  static double[] confidenceIntervalValues(List<Double> zs)
+  {
+    double mMean = calcMean(zs);
+    double std = calcStandardDevEstimate(mMean, zs);
+    double[] values = new double[2];
+    values[0] = mMean ;
+    values[1] = std;
+    return values;
+  }
+
   static void confidenceInterval(List<Double> zs) {
     double mMean = calcMean(zs);
 

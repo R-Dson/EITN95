@@ -1,7 +1,6 @@
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -35,17 +34,54 @@ public class RunAllSims extends Global {
 
       meansT = new ArrayList<>();
       meansP = new ArrayList<>();
-      for (int i = 0; i < iter; i++) {
+
+      ArrayList<Double> PLosses = new ArrayList<>();
+      boolean overlap = false;
+
+      int i = 0;
+      while (!overlap) {
+        Container c = runOneSim(config, false);
+        
+        meansT.add(c.meanTput);
+        meansP.add(c.meanPloss);
+
+        PLosses.addAll(c.PLosses);
+        if(i > 0) // i > 0 to start with some values
+        {
+          double[] valuesNew = Statistics.confidenceIntervalValues(c.PLosses);
+          double[] valuesOld = Statistics.confidenceIntervalValues(PLosses);
+
+          double diffHigh = (valuesNew[0] - valuesOld[0]) + 1.96 * Math.sqrt(Math.pow(valuesOld[1], 2) / PLosses.size() + Math.pow(valuesNew[1], 2) / c.PLosses.size());
+          double diffLow = (valuesNew[0] - valuesOld[0]) - 1.96 * Math.sqrt(Math.pow(valuesOld[1], 2) / PLosses.size() + Math.pow(valuesNew[1], 2) / c.PLosses.size());
+          /*
+          double oldHight = valuesOld[0] + 1.96 * valuesOld[1] / Math.sqrt(c.PLosses.size());
+          double oldLow = valuesOld[0] - 1.96 * valuesOld[1] / Math.sqrt(c.PLosses.size());
+
+          double newHight = valuesNew[0] + 1.96 * valuesNew[1] / Math.sqrt(PLosses.size());
+          double newlow = valuesNew[0] - 1.96 * valuesNew[1] / Math.sqrt(PLosses.size());
+          */
+          // if they contain 0 then they overlap
+          if (diffLow > 0 || diffHigh < 0) {
+          //if (oldHight < newlow || oldLow > newHight){
+            overlap = true;
+          }
+          System.out.println("iteration: " + i +" (" + String.format("%.3f", diffLow) + ", " + String.format("%.3f", diffHigh) + ")");
+        }
+
+        i++;
+      }
+
+      /*for (int i = 0; i < iter; i++) {
         System.out.println("iteration: " + i);
-        ArrayList<Double> res = runOneSim(config, false);
+        ArrayList<Double> res = runOneSim(config, true);
         meansT.add(res.get(0));
         meansP.add(res.get(1));
-      }
+      }*/
 
       double mMean = Statistics.calcMean(meansT);
       mmTput.add(mMean);
       stdsTput.add(Statistics.calcStandardDevEstimate(mMean, meansT));
-
+      
       mMean = Statistics.calcMean(meansP);
       mmPLoss.add(mMean);
       stdsPLoss.add(Statistics.calcStandardDevEstimate(mMean, meansP));
@@ -72,7 +108,24 @@ public class RunAllSims extends Global {
     }
   }
 
-  public static ArrayList<Double> runOneSim(Config config, boolean isVerbose) {
+  static class Container
+  {
+    double meanTput;
+    double meanPloss;
+    ArrayList<Double> Tputs = new ArrayList<>();
+    ArrayList<Double> PLosses = new ArrayList<>();
+
+    public Container(double meanTput, double meanPloss, ArrayList<Double> Tputs, ArrayList<Double> PLosses)
+    {
+      this.meanPloss = meanPloss;
+      this.meanTput = meanTput;
+      this.Tputs = Tputs;
+      this.PLosses = PLosses;
+    }
+
+  }
+
+  public static Container runOneSim(Config config, boolean isVerbose) {
     reset();
     new SignalList();
     Signal actSignal;
@@ -104,17 +157,18 @@ public class RunAllSims extends Global {
 
     double meanPloss = Statistics.calcMean(gateway.PLosses);
 
-    ArrayList<Double> results = new ArrayList<>();
-    results.add(meanTput);
-    results.add(meanPloss);
+    //ArrayList<Double> results = new ArrayList<>();
+    //results.add(meanTput);
+    //results.add(meanPloss);
 
     if (isVerbose) {
+      Statistics.confidenceIntervalValues(gateway.PLosses);
       System.out.println("nbr of transmissions: " + gateway.nbrOfTransmissions);
       System.out.println("nbr of success: " + gateway.nbrOfSuccess);
       System.out.println("success ratio: " + (double) gateway.nbrOfSuccess / (double) gateway.nbrOfTransmissions);
     }
-
-    return results;
+    
+    return new Container(meanTput, meanPloss, gateway.Tputs, gateway.PLosses);
   }
 
   static Config getConfig(int n) {
