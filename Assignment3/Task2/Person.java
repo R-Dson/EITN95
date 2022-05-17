@@ -10,6 +10,8 @@ public class Person {
 	public int id;
 	public boolean meeting;
 	public double[] meetings;
+	private double straightTime;
+	private double diagonalTime;
 	private static final int NORTH = 0, NORTHWEST = 1, WEST = 2, SOUTHWEST = 3, SOUTH = 4, SOUTHEAST = 5, EAST = 6,
 			NORTHEAST = 7;
 
@@ -22,6 +24,8 @@ public class Person {
 		changeDirection();
 		meetings = new double[20];
 		meeting = false;
+		straightTime = (1.0 / 2) / speed;
+		diagonalTime = Math.sqrt(1.0 / 2) / speed;
 	}
 
 	public void move() {
@@ -75,6 +79,7 @@ public class Person {
 	}
 
 	private void changeDirection() {
+
 		reset = random.nextInt(10) + 1;
 		direction = random.nextInt(8);
 	}
@@ -88,16 +93,15 @@ public class Person {
 	}
 
 	public double timeto() {
-		double tmp = 0;
+
 		if (direction == NORTHEAST || direction == NORTHWEST || direction == SOUTHWEST || direction == SOUTHEAST) {
 
-			tmp = Math.sqrt(1.0 / 2) / speed;
+			return diagonalTime;
 
 		} else {
 
-			tmp = (1.0 / 2) / speed;
+			return straightTime;
 		}
-		return tmp;
 
 	}
 
@@ -106,13 +110,22 @@ public class Person {
 	}
 
 	public boolean done() {
-		for (int i = 0; i < 20; i++) {
+		for (int i = 0; i < meetings.length; i++) {
 			if (meetings[i] == 0.0 && i != id) {
 				return false;
 			}
 
 		}
 		return true;
+	}
+
+	public int totalTime() {
+		int totaltime = 0;
+		for (int i = 0; i < meetings.length; i++) {
+			totaltime += meetings[i] / 60;
+
+		}
+		return totaltime;
 	}
 
 	public String printMeetings() {
