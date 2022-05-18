@@ -74,6 +74,15 @@ class MyFileReader extends Global {
                 case "nbrOfMeasurements":
                     config.nbrOfMeasurements = Integer.parseInt(split[1]);
                     break;
+                case "isSmart":
+                    config.isSmart = Boolean.parseBoolean(split[1]);
+                    break;
+                case "lb":
+                    config.lb = Double.parseDouble(split[1]);
+                    break;
+                case "ub":
+                    config.ub = Double.parseDouble(split[1]);
+                    break;
                 case "xs":
                     String[] xs = (split[1]).split(",");
                     int nX = xs.length;

@@ -7,6 +7,9 @@ public class Config {
     public int nbrOfMeasurements;
     public Integer[] xs;
     public Integer[] ys;
+    public boolean isSmart;
+    public double lb;
+    public double ub;
 
     public Config() {
     }
@@ -30,6 +33,21 @@ public class Config {
         this.nbrOfMeasurements = nbrOfMeasurements;
         this.xs = xs;
         this.ys = ys;
+    }
+
+    public Config(int n, int ts, double Tp, double r, double timeBetweenSamples, int nbrOfMeasurements, Integer[] xs,
+            Integer[] ys, boolean isSmart, double lb, double ub) {
+        this.n = n;
+        this.ts = ts;
+        this.Tp = Tp;
+        this.r = r;
+        this.timeBetweenSamples = timeBetweenSamples;
+        this.nbrOfMeasurements = nbrOfMeasurements;
+        this.xs = xs;
+        this.ys = ys;
+        this.isSmart = isSmart;
+        this.lb = lb;
+        this.ub = ub;
     }
 
     @Override

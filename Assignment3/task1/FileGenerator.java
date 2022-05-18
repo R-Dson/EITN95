@@ -16,6 +16,9 @@ public class FileGenerator extends Global {
         double Tp = 1;
         double timeBetweenSamples = 1000;
         int nbrOfMeasurements = 1000;
+        boolean isSmart = true;
+        double lb = ts * 0.1;
+        double ub = ts * 0.5;
 
         Random slump = new Random();
         ArrayList<Integer> xlist = new ArrayList<>();
@@ -39,7 +42,7 @@ public class FileGenerator extends Global {
         Integer[] xs = xlist.toArray(new Integer[n]);
         Integer[] ys = ylist.toArray(new Integer[n]);
 
-        Config c = new Config(n, ts, Tp, r, timeBetweenSamples, nbrOfMeasurements, xs, ys);
+        Config c = new Config(n, ts, Tp, r, timeBetweenSamples, nbrOfMeasurements, xs, ys, isSmart, lb, ub);
 
         FileGenerator fg = new FileGenerator(c);
         fg.printConfig();
@@ -63,6 +66,9 @@ public class FileGenerator extends Global {
         println("r=" + Double.toString(c.r) + aNewLine);
         println("timeBetweenSamples=" + Double.toString(c.timeBetweenSamples) + aNewLine);
         println("nbrOfMeasurements=" + Integer.toString(c.nbrOfMeasurements) + aNewLine);
+        println("isSmart=" + Boolean.toString(c.isSmart) + aNewLine);
+        println("lb=" + Double.toString(c.lb) + aNewLine);
+        println("ub=" + Double.toString(c.ub) + aNewLine);
 
         println("xs=");
         for (Integer x : c.xs) {

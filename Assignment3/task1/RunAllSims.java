@@ -1,22 +1,24 @@
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Random;
 
 public class RunAllSims extends Global {
 
-  static int[] ns = { 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000 };
+  static Integer[] ns = { 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000 };
+  static Double[] rs = { 6000.0, 7000.0, 8000.0, 9000.0, 10000.0, 11000.0 };
 
   public static void main(String[] args) throws IOException {
-    runAllNs();
+    runAll(rs);
   }
 
   /*
    * Calculates the mean of means of both Tput and Package Loss. These
    * are stored in files, see bottom of method.
    */
-  private static void runAllNs() {
+  private static <T extends Number> void runAll(T[] values) {
     ArrayList<Double> mmTput = new ArrayList<>();
     ArrayList<Double> stdsTput = new ArrayList<>();
     ArrayList<Double> mmPLoss = new ArrayList<>();
@@ -26,62 +28,29 @@ public class RunAllSims extends Global {
     Config config;
     ArrayList<Double> meansT;
     ArrayList<Double> meansP;
-    for (int n : ns) {
+    for (T val : values) {
       System.out.println("----------------");
-      System.err.println("n = " + n);
+      if (val instanceof Double) {
+        System.out.println("r = " + val.doubleValue());
+      } else if (val instanceof Integer) {
+        System.out.println("n = " + val.intValue());
+      }
 
-      config = getConfig(n);
+      config = getConfig(val);
 
       meansT = new ArrayList<>();
       meansP = new ArrayList<>();
-
-      ArrayList<Double> PLosses = new ArrayList<>();
-      boolean overlap = false;
-
-      int i = 0;
-      while (!overlap) {
-        Container c = runOneSim(config, false);
-        
-        meansT.add(c.meanTput);
-        meansP.add(c.meanPloss);
-
-        PLosses.addAll(c.PLosses);
-        if(i > 0) // i > 0 to start with some values
-        {
-          double[] valuesNew = Statistics.confidenceIntervalValues(c.PLosses);
-          double[] valuesOld = Statistics.confidenceIntervalValues(PLosses);
-
-          double diffHigh = (valuesNew[0] - valuesOld[0]) + 1.96 * Math.sqrt(Math.pow(valuesOld[1], 2) / PLosses.size() + Math.pow(valuesNew[1], 2) / c.PLosses.size());
-          double diffLow = (valuesNew[0] - valuesOld[0]) - 1.96 * Math.sqrt(Math.pow(valuesOld[1], 2) / PLosses.size() + Math.pow(valuesNew[1], 2) / c.PLosses.size());
-          /*
-          double oldHight = valuesOld[0] + 1.96 * valuesOld[1] / Math.sqrt(c.PLosses.size());
-          double oldLow = valuesOld[0] - 1.96 * valuesOld[1] / Math.sqrt(c.PLosses.size());
-
-          double newHight = valuesNew[0] + 1.96 * valuesNew[1] / Math.sqrt(PLosses.size());
-          double newlow = valuesNew[0] - 1.96 * valuesNew[1] / Math.sqrt(PLosses.size());
-          */
-          // if they contain 0 then they overlap
-          if (diffLow > 0 || diffHigh < 0) {
-          //if (oldHight < newlow || oldLow > newHight){
-            overlap = true;
-          }
-          System.out.println("iteration: " + i +" (" + String.format("%.3f", diffLow) + ", " + String.format("%.3f", diffHigh) + ")");
-        }
-
-        i++;
-      }
-
-      /*for (int i = 0; i < iter; i++) {
+      for (int i = 0; i < iter; i++) {
         System.out.println("iteration: " + i);
-        ArrayList<Double> res = runOneSim(config, true);
+        ArrayList<Double> res = runOneSim(config, false);
         meansT.add(res.get(0));
         meansP.add(res.get(1));
-      }*/
+      }
 
       double mMean = Statistics.calcMean(meansT);
       mmTput.add(mMean);
       stdsTput.add(Statistics.calcStandardDevEstimate(mMean, meansT));
-      
+
       mMean = Statistics.calcMean(meansP);
       mmPLoss.add(mMean);
       stdsPLoss.add(Statistics.calcStandardDevEstimate(mMean, meansP));
@@ -89,10 +58,10 @@ public class RunAllSims extends Global {
       System.out.println("----------------");
     }
 
-    writeResultsToFile(mmTput, "a3p3_Tput_mMean.txt");
-    writeResultsToFile(stdsTput, "a3p3_Tput_stds.txt");
-    writeResultsToFile(mmPLoss, "a3p3_PLoss_mMean.txt");
-    writeResultsToFile(stdsPLoss, "a3p3_PLoss_stds.txt");
+    writeResultsToFile(mmTput, "a3p4_Tput_mMean_vary_r.txt");
+    writeResultsToFile(stdsTput, "a3p4_Tput_stds_vary_r.txt");
+    writeResultsToFile(mmPLoss, "a3p4_PLoss_mMean_vary_r.txt");
+    writeResultsToFile(stdsPLoss, "a3p4_PLoss_stds_vary_r.txt");
   }
 
   static <T> void writeResultsToFile(Iterable<T> ys, String fileName) {
@@ -108,24 +77,7 @@ public class RunAllSims extends Global {
     }
   }
 
-  static class Container
-  {
-    double meanTput;
-    double meanPloss;
-    ArrayList<Double> Tputs = new ArrayList<>();
-    ArrayList<Double> PLosses = new ArrayList<>();
-
-    public Container(double meanTput, double meanPloss, ArrayList<Double> Tputs, ArrayList<Double> PLosses)
-    {
-      this.meanPloss = meanPloss;
-      this.meanTput = meanTput;
-      this.Tputs = Tputs;
-      this.PLosses = PLosses;
-    }
-
-  }
-
-  public static Container runOneSim(Config config, boolean isVerbose) {
+  public static ArrayList<Double> runOneSim(Config config, boolean isVerbose) {
     reset();
     new SignalList();
     Signal actSignal;
@@ -138,7 +90,7 @@ public class RunAllSims extends Global {
       int x = config.xs[i];
       int y = config.ys[i];
       Coord coord = new Coord(x, y);
-      Sensor sensor = new Sensor(coord, gateway, config.ts);
+      Sensor sensor = new Sensor(coord, gateway, config.ts, config.isSmart, config.lb, config.ub);
       // stochastic, otherwise a lot of collisions immediately
       SignalList.SendSignal(SEND_MESSAGE, sensor, time + Statistics.expMean(config.ts));
     }
@@ -157,26 +109,36 @@ public class RunAllSims extends Global {
 
     double meanPloss = Statistics.calcMean(gateway.PLosses);
 
-    //ArrayList<Double> results = new ArrayList<>();
-    //results.add(meanTput);
-    //results.add(meanPloss);
+    ArrayList<Double> results = new ArrayList<>();
+    results.add(meanTput);
+    results.add(meanPloss);
 
     if (isVerbose) {
-      Statistics.confidenceIntervalValues(gateway.PLosses);
       System.out.println("nbr of transmissions: " + gateway.nbrOfTransmissions);
       System.out.println("nbr of success: " + gateway.nbrOfSuccess);
       System.out.println("success ratio: " + (double) gateway.nbrOfSuccess / (double) gateway.nbrOfTransmissions);
     }
-    
-    return new Container(meanTput, meanPloss, gateway.Tputs, gateway.PLosses);
+
+    return results;
   }
 
-  static Config getConfig(int n) {
-    int ts = 4000;
+  static <T extends Number> Config getConfig(T parameter) {
+    int n = 2000;
     double r = 7000;
+    if (parameter instanceof Double)
+      r = (double) parameter;
+    else if (parameter instanceof Integer)
+      n = (int) parameter;
+    else
+      throw new Error();
+
+    int ts = 4000;
     double Tp = 1;
     double timeBetweenSamples = 4000;
     int nbrOfMeasurements = 10;
+    boolean isSmart = true;
+    double lb = ts * 0.3;
+    double ub = ts * 0.7;
 
     Random slump = new Random();
     ArrayList<Integer> xlist = new ArrayList<>();
@@ -200,6 +162,6 @@ public class RunAllSims extends Global {
     Integer[] xs = xlist.toArray(new Integer[n]);
     Integer[] ys = ylist.toArray(new Integer[n]);
 
-    return new Config(n, ts, Tp, r, timeBetweenSamples, nbrOfMeasurements, xs, ys);
+    return new Config(n, ts, Tp, r, timeBetweenSamples, nbrOfMeasurements, xs, ys, isSmart, lb, ub);
   }
 }

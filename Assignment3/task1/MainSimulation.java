@@ -12,10 +12,10 @@ public class MainSimulation extends Global {
     new SignalList();
     Signal actSignal;
 
-    // MyFileReader f = new MyFileReader(configFileName);
-    // f.readFile();
-    // Config config = f.getConfig();
-    Config config = getConfig();
+    MyFileReader f = new MyFileReader(configFileName);
+    f.readFile();
+    Config config = f.getConfig();
+    // Config config = getConfig();
 
     Gateway gateway = new Gateway(config.r, config.timeBetweenSamples, config.Tp);
     SignalList.SendSignal(MEASURE, gateway, time + config.timeBetweenSamples);
@@ -25,7 +25,7 @@ public class MainSimulation extends Global {
       int x = config.xs[i];
       int y = config.ys[i];
       Coord coord = new Coord(x, y);
-      Sensor sensor = new Sensor(coord, gateway, config.ts);
+      Sensor sensor = new Sensor(coord, gateway, config.ts, config.isSmart, config.lb, config.ub);
       // stochastic, otherwise a lot of collisions immediately
       SignalList.SendSignal(SEND_MESSAGE, sensor, time + Statistics.expMean(config.ts));
     }
@@ -40,9 +40,7 @@ public class MainSimulation extends Global {
       actSignal.destination.TreatSignal(actSignal);
     }
 
-    double meanSum = gateway.Tputs.stream()
-        .reduce(0.0, (subtotal, element) -> subtotal + element);
-    double mean = (1.0 / config.nbrOfMeasurements) * meanSum;
+    double mean = Statistics.calcMean(gateway.Tputs);
 
     System.out.println("nbr of transmissions: " + gateway.nbrOfTransmissions);
     System.out.println("nbr of success: " + gateway.nbrOfSuccess);
@@ -97,7 +95,6 @@ public class MainSimulation extends Global {
     c2 = new Coord(1, 10000);
     System.out.println("Distance: " + c1.distance(c2));
     System.out.println("Should be false due: " + (c1.distance(c2) <= config.r));
-
   }
 
   public static void runDebugSim() throws IOException {
@@ -114,7 +111,7 @@ public class MainSimulation extends Global {
       int x = config.xs[i];
       int y = config.ys[i];
       Coord coord = new Coord(x, y);
-      Sensor sensor = new Sensor(coord, gateway, config.ts);
+      Sensor sensor = new Sensor(coord, gateway, config.ts, config.isSmart, config.lb, config.ub);
       // stochastic, otherwise a lot of collisions immediately
       SignalList.SendSignal(SEND_MESSAGE, sensor, time);
     }

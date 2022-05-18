@@ -4,16 +4,17 @@ public class Sensor extends Proc {
   Gateway gateway;
   // mean
   double ts;
-  boolean isSmart = true;
+  boolean isSmart;
   double lb;
   double ub;
 
-  Sensor(Coord coord, Gateway gateway, double ts) {
+  Sensor(Coord coord, Gateway gateway, double ts, boolean isSmart, double lb, double ub) {
     this.coord = coord;
     this.gateway = gateway;
     this.ts = ts;
-    this.lb = ts * 0.1;
-    this.ub = ts * 0.5;
+    this.isSmart = isSmart;
+    this.lb = lb;
+    this.ub = ub;
   }
 
   @Override
