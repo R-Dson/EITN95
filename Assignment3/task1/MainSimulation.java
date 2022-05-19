@@ -3,7 +3,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Random;
 
 public class MainSimulation extends Global {
 
@@ -11,7 +10,7 @@ public class MainSimulation extends Global {
     runAll(15);
   }
 
-  private static void runAll(int iter) {
+  private static void runAll(int iter) throws IOException {
     ArrayList<Double> mmTput = new ArrayList<>();
     ArrayList<Double> stdsTput = new ArrayList<>();
     ArrayList<Double> mmPLoss = new ArrayList<>();
